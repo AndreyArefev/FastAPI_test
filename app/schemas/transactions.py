@@ -1,3 +1,4 @@
+from datetime import date
 from pydantic import BaseModel
 
 class TransactionBase(BaseModel):
@@ -6,7 +7,7 @@ class TransactionBase(BaseModel):
 
 class TransactionMake(TransactionBase):
     type_operation: str
-    deposit: float
+    amount: float
 
     class Config:
         orm_mode = True
@@ -14,4 +15,5 @@ class TransactionMake(TransactionBase):
 
 class Transaction(TransactionMake):
     transaction_id: int
+    date_transaction: date
 

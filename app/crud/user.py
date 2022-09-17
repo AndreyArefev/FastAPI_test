@@ -1,10 +1,12 @@
+import datetime
+
 from fastapi import (
     Depends,
     HTTPException,
     status,
     Request,
 )
-typing import Optional, List
+from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models import model_db
 from app.db.database import get_session
@@ -12,11 +14,12 @@ from app.schemas import accounts
 
 class UserService:
     @staticmethod
-    def deposit(account_name, account_balance, amount) -> float:
-        pass
+    def deposit(account_balance, amount) -> float:
+        account_balance += amount
+        return account_balance
 
     @staticmethod
-    def withdrow(self, account_balance, amount) -> float:
+    def withdrow(account_balance, amount) -> float:
         if account_balance - amount >= 0:
             account_balance -= amount
         else:
@@ -65,21 +68,7 @@ class UserService:
         current_account = self.check_name_account(account_name, user_id)
         if current_account:
             product_price = self.check_product(product_id)
-            new_account_balance = self.withdrow(current_account.account_id,
-                                                current_account.account_balance,
-                                                product_price,
-                                                )
-            transaction = model_db.Transaction(
-                user_id=current_account.user_id,
-                account_id=current_account.account_id,
-                type_operation='Withdrow',
-                deposit=product_price)
-            self.session.add(transaction)
-            self.session.query(model_db.Account) \
-                .filter(model_db.Account.account_id == current_account.account_id) \
-                .update({'account_balance': new_account_balance})
-            self.session.commit()
-            return transaction
+            return self.make_transaction(current_account, type_operation='Withdrow', amount=product_price)
         else:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                                 detail='Аккаунта с данным именем не существует. Выберите другой аккаунт',
@@ -101,21 +90,15 @@ class UserService:
                        account: accounts.AccountPayment) -> model_db.Transaction:
         current_account = self.check_name_account(account.account_name, user_id)
         if current_account:
-            new_account_balance = self.deposit(current_account.account_id,
-                                               current_account.account_balance,
+            new_account_balance = self.deposit(current_account.account_balance,
                                                account.amount_payment,
                                                )
             transaction = model_db.Transaction(
                 user_id = user_id,
-                account_id = (self.session
-                              .query(model_db.Account)
-                              .filter(model_db.Account.account_name == current_account.account_name,
-                                      model_db.Account.user_id == user_id)
-                              .first()
-                              ),
+                account_id = current_account.account_id,
                 type_operation = 'Deposit',
-                amount = current_account.amount_payment,
-        )
+                amount = account.amount_payment,
+                date_transaction=datetime.date.today())
             self.session.add(transaction)
             self.session.query(model_db.Account) \
                 .filter(model_db.Account.account_id == current_account.account_id) \
@@ -127,6 +110,32 @@ class UserService:
                                 detail='Аккаунта с данным именем не существует. Выберите другой аккаунт',
                                 headers={'WWW-Authenticate': 'Bearer'},
                                 )
+    def make_transaction(self,
+                         current_account: model_db.Account,
+                         type_operation: str,
+                         amount: float,
+                         ) -> model_db.Transaction:
+        if type_operation == 'Withdrow':
+            new_account_balance = self.withdrow(current_account.account_balance,
+                                                amount)
+        elif type_operation == 'Deposit':
+            new_account_balance = self.deposit(current_account.account_balance,
+                                               amount)
+        else:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail='Недопустимая операция')
+        transaction = model_db.Transaction(
+            user_id=current_account.user_id,
+            account_id=current_account.account_id,
+            type_operation=type_operation,
+            amount=amount,
+            date_transaction=datetime.date.today())
+        self.session.add(transaction)
+        self.session.query(model_db.Account) \
+            .filter(model_db.Account.account_id == current_account.account_id) \
+            .update({'account_balance': new_account_balance})
+        self.session.commit()
+        return transaction
 
     def check_name_account(self,
                            account_name: str,

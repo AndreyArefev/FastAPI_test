@@ -5,9 +5,11 @@ from sqlalchemy import (
     String,
     Boolean,
     Float,
-    Text)
+    Text,
+    Date)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 
 Base = declarative_base()
@@ -48,5 +50,6 @@ class Transaction(Base):
     account_id = Column(Integer, ForeignKey('accounts.account_id'), index=True)
     type_operation = Column(String)
     amount = Column(Float)
+    date_transaction = Column(Date)
     user = relationship("User", backref="transactions")
-    account = relationship("Account", backref="transactions")
+    account = relationship("Account", backref="transactions", order_by=date_transaction)

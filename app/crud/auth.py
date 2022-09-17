@@ -123,12 +123,12 @@ class AuthService: #класс реализующий все методы по �
     ) -> users.Token:
         exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Incorrect username or password',
+            detail='Некорректное имя пользователя или пароль',
             headers={'WWW-Authenticate': 'Bearer'},
         )
         exception_active = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Your email has not been verified. Check email',
+            detail='Ваш е-мэил еще не верефицирован. Проверьте ваш е-мэил',
             headers={'WWW-Authenticate': 'Bearer'},
         )
         user = (
@@ -184,7 +184,7 @@ class AuthService: #класс реализующий все методы по �
                                               {"request": request, "username": user.username})
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Invalid token or expired token',
+            detail='Недействительный токен или токен с истекшим сроком действия',
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
@@ -197,6 +197,6 @@ class RoleChecker:  #класс реализующий управление до
         if user.is_superuser not in self.is_superuser:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Could not validate credentials',
+                detail='Доступ разрешен только администратору',
                 headers={'WWW-Authenticate': 'Bearer'},
             )

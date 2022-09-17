@@ -72,7 +72,3 @@ def account_payment(
 ):
     return user_service.account_payment(user.user_id, current_account)
 
-#5. Просмотр баланса всех счетов и историю транзакций
-#6. Зачисление средств на счёт, выполняется с помощью эндпоинта [POST] /payment/webhook симулирует начисление со стороннего сервиса.
-
-

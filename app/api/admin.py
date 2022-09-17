@@ -6,24 +6,17 @@ from fastapi import (
     Response,
 )
 
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import HTMLResponse
-from app.schemas import users, accounts, products
-from app.crud.auth import (AuthService,
-                           get_current_user,
-                            RoleChecker,
-)
+from app.schemas import users, products
+from app.crud.auth import RoleChecker
 from app.crud.admin import AdminService
-from app.crud.user import UserService
-from app.api import user
 from typing import List
 
 router = APIRouter(
     prefix='/admin',
     tags=['admin'],
 )
-
 allow_access_resource = RoleChecker(['admin'])
+
 
 @router.get(
     '/products',
@@ -38,7 +31,7 @@ def get_products(
 
 @router.post(
     '/products',
-    response_model=products.ProductCreate,
+    response_model=products.Product,
     dependencies=[Depends(allow_access_resource)],
     status_code=status.HTTP_201_CREATED,
 )
@@ -62,7 +55,7 @@ def get_product(
 
 @router.put(
     '/products/{product_id}',
-    response_model=products.ProductUpdate,
+    response_model=products.Product,
     dependencies=[Depends(allow_access_resource)],
 )
 def update_product(

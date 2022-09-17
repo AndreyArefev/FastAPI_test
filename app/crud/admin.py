@@ -49,8 +49,8 @@ class AdminService:
         return update_product
 
     def delete_product(self,
-                       user_id):
-        product = self._get_user(user_id)
+                       product_id):
+        product = self.get_product(product_id)
         self.session.delete(product)
         self.session.commit()
 

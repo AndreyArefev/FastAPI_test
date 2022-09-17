@@ -22,7 +22,7 @@ class User(Base):
     username = Column(String(255), unique=True)
     password_hash = Column(String)
     is_active = Column(Boolean, default=False)
-    is_superuser = Column(String)
+    is_superuser = Column(String, default='user')
 
 
 

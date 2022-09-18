@@ -4,7 +4,6 @@ from fastapi import (
     Depends,
     HTTPException,
     status,
-    Request,
 )
 from typing import Optional, List
 from sqlalchemy.orm import Session
@@ -110,6 +109,7 @@ class UserService:
                                 detail='Аккаунта с данным именем не существует. Выберите другой аккаунт',
                                 headers={'WWW-Authenticate': 'Bearer'},
                                 )
+
     def make_transaction(self,
                          current_account: model_db.Account,
                          type_operation: str,

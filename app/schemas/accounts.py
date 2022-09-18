@@ -9,8 +9,10 @@ class AccountCreate(BaseModel):
     class Config:
         orm_mode = True
 
+
 class BuyProduct(AccountCreate):
     product_id: int
+
 
 class AccountPayment(AccountCreate):
     amount_payment: float

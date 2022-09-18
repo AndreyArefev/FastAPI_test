@@ -1,12 +1,9 @@
 from fastapi import (
     APIRouter,
     Depends,
-    status,
-    Request,
+    status
 )
 
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import HTMLResponse
 from typing import List
 from app.schemas import products, accounts, transactions, users
 from app.crud.auth import get_current_user

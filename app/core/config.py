@@ -22,8 +22,7 @@ class Settings(BaseSettings):
                         f":{os.getenv('DATABASE_PASSWORD')}" \
                         f"@{os.getenv('DATABASE_HOST')}" \
                         f":{os.getenv('DATABASE_PORT')}" \
-                        f"/{os.getenv('DATABASE_NAME')}"
-
+                        f"/{os.getenv('DATABASE_NAME')}" #postgresql://postgres:1007@localhost:5432/postgres
 
     jwt_secret: str = os.getenv('JWT_SECRET')
     jwt_algorithm: str = os.getenv('JWT_ALGORITHM')
@@ -43,7 +42,7 @@ class Settings(BaseSettings):
         MAIL_TLS=True,
         MAIL_SSL=False,
         USE_CREDENTIALS=True,
-        TEMPLATE_FOLDER='./templates/'
+        TEMPLATE_FOLDER=os.getenv('TEMPLATE_FOLDER'),
     )
 
 

@@ -29,9 +29,11 @@ class UserAccounts(User):
 class UserStatus(BaseModel):
     is_active: bool
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str = 'bearer'
+
 
 class EmailSchema(BaseModel):
     email: List[EmailStr]

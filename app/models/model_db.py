@@ -9,7 +9,6 @@ from sqlalchemy import (
     Date)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from datetime import datetime
 
 
 Base = declarative_base()
@@ -23,7 +22,6 @@ class User(Base):
     password_hash = Column(String)
     is_active = Column(Boolean, default=False)
     is_superuser = Column(String, default='user')
-
 
 
 class Product(Base):
